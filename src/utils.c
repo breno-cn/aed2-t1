@@ -2,30 +2,30 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/time.h>
+#include <time.h>
 #include "sort.h"
 #include "fort.h"
 
-void randomize_transactions(Transaction *transaction, int len) {
-    char *cpf;
+void randomize_transactions(Product *transaction, int len) {
+    char *description;
     for (int i = 1; i <= len; i++) {
-        cpf = malloc(12 * sizeof(int));
-        sprintf(cpf, "%.11u", (unsigned) rand());
-        strcpy(transaction[i - 1].cpf, cpf);
+        description = malloc(12 * sizeof(int));
+        sprintf(description, "%.11u", (unsigned) rand());
+        strcpy(transaction[i - 1].description, description);
 
-        transaction[i-1].id = (rand() - i) % 100000;
-        transaction[i-1].value = (unsigned) rand();
+        transaction[i-1].code = (rand() - i) % 100000;
+        transaction[i-1].price = (unsigned) rand();
     }
-    free(cpf);
+    free(description);
 }
 
-void print_transactions(Transaction *transaction, int len) {
+void print_transactions(Product *transaction, int len) {
     for (int i = 0; i < len; i++) {
-        printf("cpf: %s value: %.5g id: %d\n", transaction[i].cpf, transaction[i].value, transaction[i].id);
+        printf("description: %s value: %.5g id: %d\n", transaction[i].description, transaction[i].price, transaction[i].code);
     }
 }
 
-float benchmark_sort(Transaction *transaction, int len, sort_fn sort, cmp_func cmp) {
+float benchmark_sort(Product *transaction, int len, sort_fn sort, cmp_func cmp) {
     clock_t acc = 0;
 
     for (int i = 0; i < 10; i++) {
@@ -41,12 +41,12 @@ float benchmark_sort(Transaction *transaction, int len, sort_fn sort, cmp_func c
     return ((float) avg / CLOCKS_PER_SEC);
 }
 
-float benchmark_bucketsort(Transaction *transaction, int len) {
+float benchmark_bucketsort(Product *transaction, int len) {
     clock_t acc = 0;
 
     int ids[len];
     for (int i = 0; i < len; i++)
-        ids[i] = transaction[i].id;
+        ids[i] = transaction[i].code;
 
     for (int i = 0; i < 10; i++)
     {
@@ -63,7 +63,7 @@ float benchmark_bucketsort(Transaction *transaction, int len) {
     return ((float) avg / CLOCKS_PER_SEC);
 }
 
-char ***benchmark_all(Transaction *transaction, const unsigned int *slices, cmp_func cmp, int is_by_id) {
+char ***benchmark_all(Product *transaction, const unsigned int *slices, cmp_func cmp, int is_by_id) {
     char ***sort_times = malloc(8 * sizeof(char **));
     for (int i = 0; i < 7; i++) {
         sort_times[i] = malloc(8 * sizeof(float *));
@@ -73,7 +73,7 @@ char ***benchmark_all(Transaction *transaction, const unsigned int *slices, cmp_
     }
 
     /* Pra slices[0] elementos */
-    transaction = malloc(slices[0] * sizeof(Transaction));
+    transaction = malloc(slices[0] * sizeof(Product));
     randomize_transactions(transaction, slices[0]);
     sprintf(sort_times[0][0], "%f", benchmark_sort(transaction, slices[0], insertionsort, cmp));
     randomize_transactions(transaction, slices[0]);
@@ -93,7 +93,7 @@ char ***benchmark_all(Transaction *transaction, const unsigned int *slices, cmp_
     free(transaction);
 
     /* Pra slices[1] elementos */
-    transaction = malloc(slices[1] * sizeof(Transaction));
+    transaction = malloc(slices[1] * sizeof(Product));
     randomize_transactions(transaction, slices[1]);
     sprintf(sort_times[0][1], "%f", benchmark_sort(transaction, slices[1], insertionsort, cmp));
     randomize_transactions(transaction, slices[1]);
@@ -113,7 +113,7 @@ char ***benchmark_all(Transaction *transaction, const unsigned int *slices, cmp_
     free(transaction);
 
     /* Pra slices[2] elementos */
-    transaction = malloc(slices[2] * sizeof(Transaction));
+    transaction = malloc(slices[2] * sizeof(Product));
     randomize_transactions(transaction, slices[2]);
     sprintf(sort_times[0][2], "%f", benchmark_sort(transaction, slices[2], insertionsort, cmp));
     randomize_transactions(transaction, slices[2]);
@@ -133,7 +133,7 @@ char ***benchmark_all(Transaction *transaction, const unsigned int *slices, cmp_
     free(transaction);
 
     /* Pra slices[3] elementos */
-    transaction = malloc(slices[3] * sizeof(Transaction));
+    transaction = malloc(slices[3] * sizeof(Product));
     randomize_transactions(transaction, slices[3]);
     sprintf(sort_times[0][3], "%f", benchmark_sort(transaction, slices[3], insertionsort, cmp));
     randomize_transactions(transaction, slices[3]);
@@ -153,7 +153,7 @@ char ***benchmark_all(Transaction *transaction, const unsigned int *slices, cmp_
     free(transaction);
 
     /* Pra slices[4] elementos */
-    transaction = malloc(slices[4] * sizeof(Transaction));
+    transaction = malloc(slices[4] * sizeof(Product));
     randomize_transactions(transaction, slices[4]);
     sprintf(sort_times[0][4], "%f", benchmark_sort(transaction, slices[4], insertionsort, cmp));
     randomize_transactions(transaction, slices[4]);

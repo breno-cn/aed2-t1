@@ -4,33 +4,33 @@
 #include <limits.h>
 #include "sort.h"
 
-void swap(Transaction *tr1, Transaction *tr2) {
-    Transaction temp = *tr1;
-    *tr1 = *tr2;
-    *tr2 = temp;
+void swap(Product *pr1, Product *pr2) {
+    Product temp = *pr1;
+    *pr1 = *pr2;
+    *pr2 = temp;
 }
 
-int cmp_id(Transaction *tr1, Transaction *tr2) {
-    if (tr1->id > tr2->id)
+int cmp_cod(Product *pr1, Product *pr2) {
+    if (pr1->code > pr2->code)
         return 1;
-    else if (tr1->id == tr2->id)
+    else if (pr1->code == pr2->code)
         return 0;
 
     return -1;
 }
 
-int cmp_value(Transaction *tr1, Transaction *tr2) {
-    if (tr1->value > tr2->value)
+int cmp_price(Product *pr1, Product *pr2) {
+    if (pr1->price > pr2->price)
         return 1;
 
-    if (tr1->value == tr2->value)
+    if (pr1->price == pr2->price)
         return 0;
 
     return -1;
 }
 
-int cmp_cpf(Transaction *tr1, Transaction *tr2) {
-    int res = strcmp(tr1->cpf, tr2->cpf);
+int cmp_description(Product *pr1, Product *pr2) {
+    int res = strcmp(pr1->description, pr2->description);
 
     if (res > 0)
         return 1;
@@ -41,7 +41,7 @@ int cmp_cpf(Transaction *tr1, Transaction *tr2) {
 }
 
 /* Insertion sort */
-void insertionsort(Transaction *transactions, int len, cmp_func cmp) {
+void insertionsort(Product *transactions, int len, cmp_func cmp) {
     for (int i = 0; i < len; i++) {
         for (int j = i; j > 0; j--) {
             if (cmp(&transactions[j - 1], &transactions[j]) == 1) {
@@ -52,9 +52,9 @@ void insertionsort(Transaction *transactions, int len, cmp_func cmp) {
 }
 
 /* Shell sort */
-void shellsort(Transaction *transactions, int len, cmp_func cmp) {
+void shellsort(Product *transactions, int len, cmp_func cmp) {
     int i, j, k, h = 1;
-    Transaction aux;
+    Product aux;
 
     do { h = h * 3 + 1;
     } while (h < len);
@@ -75,9 +75,9 @@ void shellsort(Transaction *transactions, int len, cmp_func cmp) {
 }
 
 /* Pancake sort */
-void pancakesort_flip(Transaction *arr, int i) {
+void pancakesort_flip(Product *arr, int i) {
     int start = 0;
-    Transaction *temp;
+    Product *temp;
     while (start < i) {
         swap(&arr[start], &arr[i]);
         start++;
@@ -85,7 +85,7 @@ void pancakesort_flip(Transaction *arr, int i) {
     }
 }
 
-int pancakesort_findMax(Transaction *arr, int n, cmp_func cmp) {
+int pancakesort_findMax(Product *arr, int n, cmp_func cmp) {
     int mi, i;
 
     for (mi = 0, i = 0; i < n; ++i)
@@ -95,7 +95,7 @@ int pancakesort_findMax(Transaction *arr, int n, cmp_func cmp) {
     return mi;
 }
 
-void pancakesort(Transaction* arr, int n, cmp_func cmp) {
+void pancakesort(Product* arr, int n, cmp_func cmp) {
     for (int curr_size = n; curr_size > 1; --curr_size) {
         int mi = pancakesort_findMax(arr, curr_size, cmp);
 
@@ -107,7 +107,7 @@ void pancakesort(Transaction* arr, int n, cmp_func cmp) {
 }
 
 /* Heap sort */
-void heapsort_heapify(Transaction arr[], int n, int i, cmp_func cmp) {
+void heapsort_heapify(Product arr[], int n, int i, cmp_func cmp) {
     int largest = i;
     int left = 2 * i + 1;
     int right = 2 * i + 2;
@@ -124,7 +124,7 @@ void heapsort_heapify(Transaction arr[], int n, int i, cmp_func cmp) {
     }
 }
 
-void heapsort_(Transaction arr[], int n, cmp_func cmp) {
+void heapsort_(Product arr[], int n, cmp_func cmp) {
     for (int i = n / 2 - 1; i >= 0; i--)
         heapsort_heapify(arr, n, i, cmp);
 
@@ -135,7 +135,7 @@ void heapsort_(Transaction arr[], int n, cmp_func cmp) {
 }
 
 /* Cocktail Sort */
-void cocktailsort(Transaction *transaction, int len, cmp_func cmp) {
+void cocktailsort(Product *transaction, int len, cmp_func cmp) {
     int swapped = 1, start = 0;
     int end = len - 1;
 
@@ -198,11 +198,11 @@ void bucketsort(int array[], int len) {
 }
 
 /* Quick sort */
-int quicksort_partition(Transaction *array, int left, int right, cmp_func cmp) {
+int quicksort_partition(Product *array, int left, int right, cmp_func cmp) {
     int mid = (left + right) / 2;
-    Transaction a = array[left];
-    Transaction b = array[mid];
-    Transaction c = array[right];
+    Product a = array[left];
+    Product b = array[mid];
+    Product c = array[right];
 
     int medianaIndice;
     if (cmp(&a, &b) == -1) {
@@ -229,7 +229,7 @@ int quicksort_partition(Transaction *array, int left, int right, cmp_func cmp) {
 
     swap(&array[medianaIndice], &array[right]);
 
-    Transaction pivot = array[right];
+    Product pivot = array[right];
     int i = left - 1;
     int j;
 
@@ -244,7 +244,7 @@ int quicksort_partition(Transaction *array, int left, int right, cmp_func cmp) {
     return i + 1;
 }
 
-void quicksort_aux(Transaction *array, int left, int right, cmp_func cmp) {
+void quicksort_aux(Product *array, int left, int right, cmp_func cmp) {
     if (right <= left)
         return;
 
@@ -258,6 +258,6 @@ void quicksort_aux(Transaction *array, int left, int right, cmp_func cmp) {
     quicksort_aux(array, i + 1, right, cmp);
 }
 
-void quicksort(Transaction *array, int len, cmp_func cmp) {
+void quicksort(Product *array, int len, cmp_func cmp) {
     quicksort_aux(array, 0, len, cmp);
 }
