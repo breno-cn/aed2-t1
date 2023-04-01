@@ -205,7 +205,7 @@ void generate_table(char ***matriz, int is_by_id) {
     if (is_by_id == 1) {
         ft_write_ln(table, "Bucket Sort", matriz[6][0], matriz[6][1], matriz[6][2], matriz[6][3], matriz[6][4]);
     }
-
+    
     printf("%s\n", ft_to_string(table));
     ft_destroy_table(table);
 }
