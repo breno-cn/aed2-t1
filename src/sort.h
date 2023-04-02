@@ -9,9 +9,7 @@ typedef struct Product {
     double price;
 } Product;
 
-typedef int(*cmp_func)(Product*, Product*);
-
-
+typedef int (*cmp_func) (Product*, Product*);
 typedef void (*sort_fn) (Product*, int, cmp_func);
 
 int cmp_cod(Product *pr1, Product *pr2);
