@@ -194,7 +194,7 @@ void bucketsort(int array[], int len) {
         }
     }
 
-    free(bucket);
+    // free(bucket);
 }
 
 /* Quick sort */

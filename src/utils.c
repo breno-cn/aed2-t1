@@ -40,14 +40,6 @@ float benchmark_sort(Product *transaction, int len, sort_fn sort, cmp_func cmp) 
 }
 
 float benchmark_bucketsort(int ids[], int len) {
-    clock_t acc = 0;
-
-    // printf("C");
-    // int ids[len];
-    // printf("D\n");
-    // for (int i = 0; i < len; i++)
-    //     ids[i] = transaction[i].code;
-
     clock_t start = clock();
     bucketsort(ids, len);
     clock_t end = clock();
