@@ -4,6 +4,7 @@
 #include <time.h>
 #include "sort.h"
 #include "fort.h"
+#include "sort.h"
 
 void randomize_transactions(Product *transaction, int len) {
     char *description;
@@ -18,6 +19,11 @@ void randomize_transactions(Product *transaction, int len) {
     free(description);
 }
 
+void randomize_ids(int ids[], int n) {
+    for (int i = 0; i < n; i++)
+        ids[i] = rand() % 100000;
+}
+
 void print_transactions(Product *transaction, int len) {
     for (int i = 0; i < len; i++) {
         printf("description: %s value: %.5g id: %d\n", transaction[i].description, transaction[i].price, transaction[i].code);
@@ -25,44 +31,33 @@ void print_transactions(Product *transaction, int len) {
 }
 
 float benchmark_sort(Product *transaction, int len, sort_fn sort, cmp_func cmp) {
-    clock_t acc = 0;
-
-    for (int i = 0; i < 10; i++) {
-        clock_t start = clock();
-        sort(transaction, len, cmp);
-        clock_t end = clock();
-        clock_t time_elapsed = end - start;
-
-        acc += time_elapsed;
-    }
-
-    clock_t avg = acc / 10;
-    return ((float) avg / CLOCKS_PER_SEC);
+    clock_t start = clock();
+    sort(transaction, len, cmp);
+    clock_t end = clock();
+    
+    clock_t time_elapsed = end - start;
+    return ((float) time_elapsed / CLOCKS_PER_SEC);
 }
 
-float benchmark_bucketsort(Product *transaction, int len) {
+float benchmark_bucketsort(int ids[], int len) {
     clock_t acc = 0;
 
-    int ids[len];
-    for (int i = 0; i < len; i++)
-        ids[i] = transaction[i].code;
+    // printf("C");
+    // int ids[len];
+    // printf("D\n");
+    // for (int i = 0; i < len; i++)
+    //     ids[i] = transaction[i].code;
 
-    for (int i = 0; i < 10; i++)
-    {
-        clock_t start = clock();
-        bucketsort(ids, len);
-        clock_t end = clock();
-        clock_t time_elapsed = end - start;
+    clock_t start = clock();
+    bucketsort(ids, len);
+    clock_t end = clock();
+    
+    clock_t time_elapsed = end - start;
 
-        acc += time_elapsed;
-    }
-
-    clock_t avg = acc / 10;
-
-    return ((float) avg / CLOCKS_PER_SEC);
+    return ((float) time_elapsed / CLOCKS_PER_SEC);
 }
 
-char ***benchmark_all(Product *transaction, const unsigned int *slices, cmp_func cmp, int is_by_id) {
+char ***benchmark_all(Product *products, const unsigned int *slices, cmp_func cmp, int* ids) {
     char ***sort_times = malloc(8 * sizeof(char **));
     for (int i = 0; i < 7; i++) {
         sort_times[i] = malloc(8 * sizeof(float *));
@@ -73,109 +68,107 @@ char ***benchmark_all(Product *transaction, const unsigned int *slices, cmp_func
 
     /* Pra slices[0] elementos */
     printf("A");
-    transaction = malloc(slices[4] * sizeof(Product));
     printf("B\n");
-    randomize_transactions(transaction, slices[0]);
-    sprintf(sort_times[0][0], "%f", benchmark_sort(transaction, slices[0], insertionsort, cmp));
-    randomize_transactions(transaction, slices[0]);
-    sprintf(sort_times[1][0], "%f", benchmark_sort(transaction, slices[0], shellsort, cmp));
-    randomize_transactions(transaction, slices[0]);
-    sprintf(sort_times[2][0], "%f", benchmark_sort(transaction, slices[0], cocktailsort, cmp));
-    randomize_transactions(transaction, slices[0]);
-    sprintf(sort_times[3][0], "%f", benchmark_sort(transaction, slices[0], pancakesort, cmp));
-    randomize_transactions(transaction, slices[0]);
-    sprintf(sort_times[4][0], "%f", benchmark_sort(transaction, slices[0], heapsort_, cmp));
-    randomize_transactions(transaction, slices[0]);
-    sprintf(sort_times[5][0], "%f", benchmark_sort(transaction, slices[0], quicksort, cmp));
-    if (is_by_id == 1) {
-        randomize_transactions(transaction, slices[0]);
-        // sprintf(sort_times[6][0], "%f", benchmark_bucketsort(transaction, slices[0]));
+    randomize_transactions(products, slices[0]);
+    sprintf(sort_times[0][0], "%f", benchmark_sort(products, slices[0], insertionsort, cmp));
+    randomize_transactions(products, slices[0]);
+    sprintf(sort_times[1][0], "%f", benchmark_sort(products, slices[0], shellsort, cmp));
+    randomize_transactions(products, slices[0]);
+    sprintf(sort_times[2][0], "%f", benchmark_sort(products, slices[0], cocktailsort, cmp));
+    randomize_transactions(products, slices[0]);
+    sprintf(sort_times[3][0], "%f", benchmark_sort(products, slices[0], pancakesort, cmp));
+    randomize_transactions(products, slices[0]);
+    sprintf(sort_times[4][0], "%f", benchmark_sort(products, slices[0], heapsort_, cmp));
+    randomize_transactions(products, slices[0]);
+    sprintf(sort_times[5][0], "%f", benchmark_sort(products, slices[0], quicksort, cmp));
+    if (ids != NULL) {
+        randomize_ids(ids, slices[0]);
+        sprintf(sort_times[6][0], "%f", benchmark_bucketsort(ids, slices[0]));
     }
 
     /* Pra slices[1] elementos */
     printf("A");
     // transaction = reallocarray(transaction, (size_t) slices[1], (size_t) sizeof(Product));
     printf("B\n");
-    randomize_transactions(transaction, slices[1]);
-    sprintf(sort_times[0][1], "%f", benchmark_sort(transaction, slices[1], insertionsort, cmp));
-    randomize_transactions(transaction, slices[1]);
-    sprintf(sort_times[1][1], "%f", benchmark_sort(transaction, slices[1], shellsort, cmp));
-    randomize_transactions(transaction, slices[1]);
-    sprintf(sort_times[2][1], "%f", benchmark_sort(transaction, slices[1], cocktailsort, cmp));
-    randomize_transactions(transaction, slices[1]);
-    sprintf(sort_times[3][1], "%f", benchmark_sort(transaction, slices[1], pancakesort, cmp));
-    randomize_transactions(transaction, slices[1]);
-    sprintf(sort_times[4][1], "%f", benchmark_sort(transaction, slices[1], heapsort_, cmp));
-    randomize_transactions(transaction, slices[1]);
-    sprintf(sort_times[5][1], "%f", benchmark_sort(transaction, slices[1], quicksort, cmp));
-    // if (is_by_id == 1) {
-    //     randomize_transactions(transaction, slices[1]);
-    //     sprintf(sort_times[6][1], "%f", benchmark_bucketsort(transaction, slices[1]));
-    // }
+    randomize_transactions(products, slices[1]);
+    sprintf(sort_times[0][1], "%f", benchmark_sort(products, slices[1], insertionsort, cmp));
+    randomize_transactions(products, slices[1]);
+    sprintf(sort_times[1][1], "%f", benchmark_sort(products, slices[1], shellsort, cmp));
+    randomize_transactions(products, slices[1]);
+    sprintf(sort_times[2][1], "%f", benchmark_sort(products, slices[1], cocktailsort, cmp));
+    randomize_transactions(products, slices[1]);
+    sprintf(sort_times[3][1], "%f", benchmark_sort(products, slices[1], pancakesort, cmp));
+    randomize_transactions(products, slices[1]);
+    sprintf(sort_times[4][1], "%f", benchmark_sort(products, slices[1], heapsort_, cmp));
+    randomize_transactions(products, slices[1]);
+    sprintf(sort_times[5][1], "%f", benchmark_sort(products, slices[1], quicksort, cmp));
+    if (ids != NULL) {
+        randomize_ids(ids, slices[1]);
+        sprintf(sort_times[6][1], "%f", benchmark_bucketsort(ids, slices[1]));
+    }
 
     /* Pra slices[2] elementos */
     printf("A");
     // transaction = reallocarray(transaction, (size_t) slices[2], (size_t) sizeof(Product));
     printf("B\n");
-    randomize_transactions(transaction, slices[2]);
-    sprintf(sort_times[0][2], "%f", benchmark_sort(transaction, slices[2], insertionsort, cmp));
-    randomize_transactions(transaction, slices[2]);
-    sprintf(sort_times[1][2], "%f", benchmark_sort(transaction, slices[2], shellsort, cmp));
-    randomize_transactions(transaction, slices[2]);
-    sprintf(sort_times[2][2], "%f", benchmark_sort(transaction, slices[2], cocktailsort, cmp));
-    randomize_transactions(transaction, slices[2]);
-    sprintf(sort_times[3][2], "%f", benchmark_sort(transaction, slices[2], cocktailsort, cmp));
-    randomize_transactions(transaction, slices[2]);
-    sprintf(sort_times[4][2], "%f", benchmark_sort(transaction, slices[2], heapsort_, cmp));
-    randomize_transactions(transaction, slices[2]);
-    sprintf(sort_times[5][2], "%f", benchmark_sort(transaction, slices[2], quicksort, cmp));
-    // if (is_by_id == 1) {
-    //     randomize_transactions(transaction, slices[2]);
-    //     sprintf(sort_times[6][2], "%f", benchmark_bucketsort(transaction, slices[2]));
-    // }
+    randomize_transactions(products, slices[2]);
+    sprintf(sort_times[0][2], "%f", benchmark_sort(products, slices[2], insertionsort, cmp));
+    randomize_transactions(products, slices[2]);
+    sprintf(sort_times[1][2], "%f", benchmark_sort(products, slices[2], shellsort, cmp));
+    randomize_transactions(products, slices[2]);
+    sprintf(sort_times[2][2], "%f", benchmark_sort(products, slices[2], cocktailsort, cmp));
+    randomize_transactions(products, slices[2]);
+    sprintf(sort_times[3][2], "%f", benchmark_sort(products, slices[2], cocktailsort, cmp));
+    randomize_transactions(products, slices[2]);
+    sprintf(sort_times[4][2], "%f", benchmark_sort(products, slices[2], heapsort_, cmp));
+    randomize_transactions(products, slices[2]);
+    sprintf(sort_times[5][2], "%f", benchmark_sort(products, slices[2], quicksort, cmp));
+    if (ids != NULL) {
+        randomize_ids(ids, slices[2]);
+        sprintf(sort_times[6][2], "%f", benchmark_bucketsort(ids, slices[2]));
+    }
 
     /* Pra slices[3] elementos */
     printf("A");
     // transaction = reallocarray(transaction, (size_t) slices[3], (size_t) sizeof(Product));
     printf("B\n");
-    randomize_transactions(transaction, slices[3]);
-    sprintf(sort_times[0][3], "%f", benchmark_sort(transaction, slices[3], insertionsort, cmp));
-    randomize_transactions(transaction, slices[3]);
-    sprintf(sort_times[1][3], "%f", benchmark_sort(transaction, slices[3], shellsort, cmp));
-    randomize_transactions(transaction, slices[3]);
-    sprintf(sort_times[2][3], "%f", benchmark_sort(transaction, slices[3], cocktailsort, cmp));
-    randomize_transactions(transaction, slices[3]);
-    sprintf(sort_times[3][3], "%f", benchmark_sort(transaction, slices[3], cocktailsort, cmp));
-    randomize_transactions(transaction, slices[3]);
-    sprintf(sort_times[4][3], "%f", benchmark_sort(transaction, slices[3], heapsort_, cmp));
-    randomize_transactions(transaction, slices[3]);
-    sprintf(sort_times[5][3], "%f", benchmark_sort(transaction, slices[3], quicksort, cmp));
-    // if (is_by_id == 1) {
-    //     randomize_transactions(transaction, slices[3]);
-    //     sprintf(sort_times[6][3], "%f", benchmark_bucketsort(transaction, slices[3]));
-    // }
+    randomize_transactions(products, slices[3]);
+    sprintf(sort_times[0][3], "%f", benchmark_sort(products, slices[3], insertionsort, cmp));
+    randomize_transactions(products, slices[3]);
+    sprintf(sort_times[1][3], "%f", benchmark_sort(products, slices[3], shellsort, cmp));
+    randomize_transactions(products, slices[3]);
+    sprintf(sort_times[2][3], "%f", benchmark_sort(products, slices[3], cocktailsort, cmp));
+    randomize_transactions(products, slices[3]);
+    sprintf(sort_times[3][3], "%f", benchmark_sort(products, slices[3], cocktailsort, cmp));
+    randomize_transactions(products, slices[3]);
+    sprintf(sort_times[4][3], "%f", benchmark_sort(products, slices[3], heapsort_, cmp));
+    randomize_transactions(products, slices[3]);
+    sprintf(sort_times[5][3], "%f", benchmark_sort(products, slices[3], quicksort, cmp));
+    if (ids != NULL) {
+        randomize_ids(ids, slices[3]);
+        sprintf(sort_times[6][3], "%f", benchmark_bucketsort(ids, slices[3]));
+    }
 
     /* Pra slices[4] elementos */
     printf("A");
     // transaction = reallocarray(transaction, (size_t) slices[4],  (size_t) sizeof(Product));
     printf("B\n");
-    randomize_transactions(transaction, slices[4]);
-    sprintf(sort_times[0][4], "%f", benchmark_sort(transaction, slices[4], insertionsort, cmp));
-    randomize_transactions(transaction, slices[4]);
-    sprintf(sort_times[1][4], "%f", benchmark_sort(transaction, slices[4], shellsort, cmp));
-    randomize_transactions(transaction, slices[4]);
-    sprintf(sort_times[2][4], "%f", benchmark_sort(transaction, slices[4], cocktailsort, cmp));
-    randomize_transactions(transaction, slices[4]);
-    sprintf(sort_times[3][4], "%f", benchmark_sort(transaction, slices[4], pancakesort, cmp));
-    randomize_transactions(transaction, slices[4]);
-    sprintf(sort_times[4][4], "%f", benchmark_sort(transaction, slices[4], heapsort_, cmp));
-    randomize_transactions(transaction, slices[4]);
-    sprintf(sort_times[5][4], "%f", benchmark_sort(transaction, slices[4], quicksort, cmp));
-    // if (is_by_id == 1) {
-    //     randomize_transactions(transaction, slices[4]);
-    //     sprintf(sort_times[6][4], "%f", benchmark_bucketsort(transaction, slices[4]));
-    // }
-    free(transaction);
+    randomize_transactions(products, slices[4]);
+    sprintf(sort_times[0][4], "%f", benchmark_sort(products, slices[4], insertionsort, cmp));
+    randomize_transactions(products, slices[4]);
+    sprintf(sort_times[1][4], "%f", benchmark_sort(products, slices[4], shellsort, cmp));
+    randomize_transactions(products, slices[4]);
+    sprintf(sort_times[2][4], "%f", benchmark_sort(products, slices[4], cocktailsort, cmp));
+    randomize_transactions(products, slices[4]);
+    sprintf(sort_times[3][4], "%f", benchmark_sort(products, slices[4], pancakesort, cmp));
+    randomize_transactions(products, slices[4]);
+    sprintf(sort_times[4][4], "%f", benchmark_sort(products, slices[4], heapsort_, cmp));
+    randomize_transactions(products, slices[4]);
+    sprintf(sort_times[5][4], "%f", benchmark_sort(products, slices[4], quicksort, cmp));
+    if (ids != NULL) {
+        randomize_ids(ids, slices[4]);
+        sprintf(sort_times[6][4], "%f", benchmark_bucketsort(ids, slices[4]));
+    }
 
     return sort_times;
 }
