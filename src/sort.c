@@ -41,18 +41,18 @@ int cmp_description(Product *pr1, Product *pr2) {
 }
 
 /* Insertion sort */
-void insertionsort(Product *transactions, int len, cmp_func cmp) {
+void insertionsort(Product *products, int len, cmp_func cmp) {
     for (int i = 0; i < len; i++) {
         for (int j = i; j > 0; j--) {
-            if (cmp(&transactions[j - 1], &transactions[j]) == 1) {
-                swap(&transactions[j - 1], &transactions[j]);
+            if (cmp(&products[j - 1], &products[j]) == 1) {
+                swap(&products[j - 1], &products[j]);
             }
         }
     }
 }
 
 /* Shell sort */
-void shellsort(Product *transactions, int len, cmp_func cmp) {
+void shellsort(Product *products, int len, cmp_func cmp) {
     int i, j, k, h = 1;
     Product aux;
 
@@ -62,14 +62,14 @@ void shellsort(Product *transactions, int len, cmp_func cmp) {
     do {
         h /= 3;
         for(i = h ; i < len ; i++) {
-            aux = transactions[i];
+            aux = products[i];
             j = i;
-            while (cmp(&transactions[j - h],  &aux) == 1) {
-                transactions[j] = transactions[j - h];
+            while (cmp(&products[j - h],  &aux) == 1) {
+                products[j] = products[j - h];
                 j -= h;
                 if (j < h) break;
             }
-            transactions[j] = aux;
+            products[j] = aux;
         }
     } while (h != 1);
 }
@@ -135,7 +135,7 @@ void heapsort_(Product arr[], int n, cmp_func cmp) {
 }
 
 /* Cocktail Sort */
-void cocktailsort(Product *transaction, int len, cmp_func cmp) {
+void cocktailsort(Product *products, int len, cmp_func cmp) {
     int swapped = 1, start = 0;
     int end = len - 1;
 
@@ -143,8 +143,8 @@ void cocktailsort(Product *transaction, int len, cmp_func cmp) {
         swapped = 0;
 
         for (int i = 0; i < end; i++) {
-            if (cmp(&transaction[i], &transaction[i + 1]) == 1) {
-                swap(&transaction[i], &transaction[i + 1]);
+            if (cmp(&products[i], &products[i + 1]) == 1) {
+                swap(&products[i], &products[i + 1]);
                 swapped = 1;
             }
         }
@@ -155,8 +155,8 @@ void cocktailsort(Product *transaction, int len, cmp_func cmp) {
         end -= 1;
 
         for (int i = end - 1; i < start - 1; i--) {
-            if (cmp(&transaction[i], &transaction[i + 1]) == 1) {
-                swap(&transaction[i], &transaction[i + 1]);
+            if (cmp(&products[i], &products[i + 1]) == 1) {
+                swap(&products[i], &products[i + 1]);
                 swapped = 1;
             }
         }

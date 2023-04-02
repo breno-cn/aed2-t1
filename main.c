@@ -3,9 +3,9 @@
 #include "src/sort.h"
 #include "src/utils.h"
 
-const unsigned int slices[5] = { 10000, 25000, 50000, 75000, 100000 };
+// const unsigned int slices[5] = { 10000, 25000, 50000, 75000, 100000 };
 // const unsigned int slices[5] = { 10, 100, 1000, 10000, 100000 };
-// const unsigned int slices[5] = { 1000, 2000, 5000, 7500, 10000 };
+const unsigned int slices[5] = { 1000, 2000, 5000, 7500, 10000 };
 
 int main (int argc, char *argv[])
 {
