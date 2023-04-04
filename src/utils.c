@@ -23,15 +23,15 @@ void randomize_ids(int ids[], int n) {
         ids[i] = rand() % 100000;
 }
 
-void print_products(Product *transaction, int len) {
+void print_products(Product *products, int len) {
     for (int i = 0; i < len; i++) {
-        printf("description: %s value: %.5g id: %d\n", transaction[i].description, transaction[i].price, transaction[i].code);
+        printf("description: %s value: %.5g id: %d\n", products[i].description, products[i].price, products[i].code);
     }
 }
 
-float benchmark_sort(Product *transaction, int len, sort_fn sort, cmp_func cmp) {
+float benchmark_sort(Product *products, int len, sort_fn sort, cmp_func cmp) {
     clock_t start = clock();
-    sort(transaction, len, cmp);
+    sort(products, len, cmp);
     clock_t end = clock();
     
     clock_t time_elapsed = end - start;
@@ -58,8 +58,6 @@ char ***benchmark_all(Product *products, const unsigned int *slices, cmp_func cm
     }
 
     /* Pra slices[0] elementos */
-    printf("A");
-    printf("B\n");
     randomize_products(products, slices[0]);
     sprintf(sort_times[0][0], "%f", benchmark_sort(products, slices[0], insertionsort, cmp));
     randomize_products(products, slices[0]);
@@ -78,8 +76,6 @@ char ***benchmark_all(Product *products, const unsigned int *slices, cmp_func cm
     }
 
     /* Pra slices[1] elementos */
-    printf("A");
-    printf("B\n");
     randomize_products(products, slices[1]);
     sprintf(sort_times[0][1], "%f", benchmark_sort(products, slices[1], insertionsort, cmp));
     randomize_products(products, slices[1]);
@@ -98,8 +94,6 @@ char ***benchmark_all(Product *products, const unsigned int *slices, cmp_func cm
     }
 
     /* Pra slices[2] elementos */
-    printf("A");
-    printf("B\n");
     randomize_products(products, slices[2]);
     sprintf(sort_times[0][2], "%f", benchmark_sort(products, slices[2], insertionsort, cmp));
     randomize_products(products, slices[2]);
@@ -118,8 +112,6 @@ char ***benchmark_all(Product *products, const unsigned int *slices, cmp_func cm
     }
 
     /* Pra slices[3] elementos */
-    printf("A");
-    printf("B\n");
     randomize_products(products, slices[3]);
     sprintf(sort_times[0][3], "%f", benchmark_sort(products, slices[3], insertionsort, cmp));
     randomize_products(products, slices[3]);
@@ -138,8 +130,6 @@ char ***benchmark_all(Product *products, const unsigned int *slices, cmp_func cm
     }
 
     /* Pra slices[4] elementos */
-    printf("A");
-    printf("B\n");
     randomize_products(products, slices[4]);
     sprintf(sort_times[0][4], "%f", benchmark_sort(products, slices[4], insertionsort, cmp));
     randomize_products(products, slices[4]);
