@@ -9,7 +9,7 @@ make build
 make run
 ```
 
-Por ser um benchmark que faz a média de 10 execuções para cada tamanho, o tempo de execução do programa pode ser alto, podendo variar entre 50 e 60 minutos.
+Por ser um benchmark que faz a média de 10 execuções para cada tamanho, o tempo de execução do programa pode ser alto, podendo variar entre 12 e 20 minutos.
 
 ## Execução
 ![img](./assets/run.png) 
